@@ -6,7 +6,7 @@ import lombok.Data;
 public class ProductCreateRequest {
 
     private String name;
-    private int price;
+    private Double price;
     private String description;
     private Long userId;
 

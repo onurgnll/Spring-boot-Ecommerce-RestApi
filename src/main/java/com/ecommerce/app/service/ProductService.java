@@ -81,7 +81,8 @@ public class ProductService {
 
 
     public List<Product> findProductsByUserId(Long userId){
-        return productRepo.findAllByUserId(userId);
+        User user = userService.findById(userId);
+        return user.getProducts();
     }
 
 }

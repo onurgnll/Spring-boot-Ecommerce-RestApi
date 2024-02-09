@@ -10,7 +10,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<Object> handleException(Exception notFoundException){
-
+        System.out.println(notFoundException.getMessage());
         return ResponseHandler.generateResponse(500, notFoundException.getMessage());
     }
     @ExceptionHandler

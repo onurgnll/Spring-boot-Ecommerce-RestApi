@@ -14,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private Long id;
+    private Long userId;
 
 
     private String name;
@@ -29,8 +29,21 @@ public class User {
     private String phoneNumber;
 
 
-    @OneToMany(mappedBy = "user",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Product> products;
+
+
+
+    @JsonIgnore
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE , CascadeType.PERSIST})
+    @JoinTable(name = "favorites" , joinColumns = @JoinColumn(name = "user_id") ,inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private List<Product> favorites;
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<CartItem> cartItems;
+
 
 }

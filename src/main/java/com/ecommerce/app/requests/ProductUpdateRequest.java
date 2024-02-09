@@ -6,6 +6,6 @@ import lombok.Data;
 public class ProductUpdateRequest {
 
     private String name;
-    private int price;
+    private Double price;
     private String description;
 }
