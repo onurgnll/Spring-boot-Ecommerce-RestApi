@@ -2,10 +2,7 @@ package com.ecommerce.app.service;
 
 import com.ecommerce.app.Exceptions.AlreadyExistException;
 import com.ecommerce.app.Exceptions.NotFoundException;
-import com.ecommerce.app.entity.CartItem;
-import com.ecommerce.app.entity.CartItemId;
-import com.ecommerce.app.entity.Product;
-import com.ecommerce.app.entity.User;
+import com.ecommerce.app.entity.*;
 import com.ecommerce.app.repos.UserRepo;
 import com.ecommerce.app.requests.AddToCartRequest;
 import com.ecommerce.app.requests.AddToFavoritesRequest;
@@ -200,4 +197,9 @@ public class UserService {
         cartItemService.deleteAllByUserId(id);
     }
 
+    public List<Order> getUserOrders(Long id) {
+
+        return userRepo.findOrdersByUserId(id);
+
+    }
 }

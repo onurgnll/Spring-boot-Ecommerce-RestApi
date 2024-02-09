@@ -47,4 +47,7 @@ public class Product {
     @JoinTable(name = "category_product" , joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<Category> categories;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "product")
+    private List<OrderItem> orderItems;
 }
