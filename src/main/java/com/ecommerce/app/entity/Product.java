@@ -28,6 +28,7 @@ public class Product {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.DETACH , CascadeType.MERGE , CascadeType.PERSIST , CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User user;

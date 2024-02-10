@@ -4,10 +4,7 @@ import com.ecommerce.app.Exceptions.AlreadyExistException;
 import com.ecommerce.app.Exceptions.NotFoundException;
 import com.ecommerce.app.entity.*;
 import com.ecommerce.app.repos.UserRepo;
-import com.ecommerce.app.requests.AddToCartRequest;
-import com.ecommerce.app.requests.AddToFavoritesRequest;
-import com.ecommerce.app.requests.RemoveFromCartList;
-import com.ecommerce.app.requests.UserCreateRequest;
+import com.ecommerce.app.requests.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -201,5 +198,19 @@ public class UserService {
 
         return userRepo.findOrdersByUserId(id);
 
+    }
+
+    public User setNumberOrAddress(Long id, AddPhoneOrAddress addPhoneOrAddress) {
+        User user = findById(id);
+
+        if(addPhoneOrAddress.getAddress() != null){
+            user.setAddress(addPhoneOrAddress.getAddress());
+        }
+        if(addPhoneOrAddress.getPhoneNumber() != null){
+            user.setPhoneNumber(addPhoneOrAddress.getPhoneNumber());
+        }
+
+
+        return save(user);
     }
 }

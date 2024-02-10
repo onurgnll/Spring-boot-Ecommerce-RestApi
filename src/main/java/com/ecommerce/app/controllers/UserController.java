@@ -1,9 +1,6 @@
 package com.ecommerce.app.controllers;
 
-import com.ecommerce.app.requests.AddToCartRequest;
-import com.ecommerce.app.requests.AddToFavoritesRequest;
-import com.ecommerce.app.requests.RemoveFromCartList;
-import com.ecommerce.app.requests.UserCreateRequest;
+import com.ecommerce.app.requests.*;
 import com.ecommerce.app.responses.ResponseHandler;
 import com.ecommerce.app.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -94,6 +91,12 @@ public class UserController {
 
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> clearCart(@PathVariable Long id, @RequestBody AddPhoneOrAddress addPhoneOrAddress){
+
+        return ResponseHandler.generateResponse(200, userService.setNumberOrAddress(id, addPhoneOrAddress));
+
+    }
 
 
 }

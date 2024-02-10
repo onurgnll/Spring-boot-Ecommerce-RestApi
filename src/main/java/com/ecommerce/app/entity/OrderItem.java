@@ -59,4 +59,11 @@ public class OrderItem {
 
 
     private int quantity;
+
+
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "shipment_id", referencedColumnName = "shipment_id")
+    private Shipment shipment;
+
 }

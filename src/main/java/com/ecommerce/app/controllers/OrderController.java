@@ -18,11 +18,16 @@ public class OrderController {
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Object> getUsersOrders(@PathVariable Long id){
-        return ResponseHandler.generateResponse(200,orderService.findOrderById(id));
+        return ResponseHandler.generateResponse(200,orderService.findOrdersByUserUserId(id));
     }
 
     @PostMapping
     public ResponseEntity<Object> getUsersOrders(@RequestBody OrderCreateRequest orderCreateRequest){
         return ResponseHandler.generateResponse(200,orderService.createOrder(orderCreateRequest));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> cancelOrderByOrderId(@PathVariable Long id){
+        return ResponseHandler.generateResponse(200,orderService.cancelOrder(id));
     }
 }

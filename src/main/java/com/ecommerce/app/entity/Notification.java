@@ -1,5 +1,6 @@
 package com.ecommerce.app.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,6 +30,7 @@ public class Notification {
     private boolean readed;
 
 
+    @JsonIgnore
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE , CascadeType.PERSIST , CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User user;
