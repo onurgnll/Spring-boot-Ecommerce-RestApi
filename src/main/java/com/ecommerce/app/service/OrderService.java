@@ -7,6 +7,7 @@ import com.ecommerce.app.requests.OrderCreateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +18,13 @@ public class OrderService {
     private OrderRepo orderRepo;
 
     private UserService userService;
+
+    private NotificationService notificationService;
+
+    @Autowired
+    public void setNotificationService(NotificationService notificationService) {
+        this.notificationService = notificationService;
+    }
 
     private OrderItemService orderItemService;
 
@@ -70,6 +78,8 @@ public class OrderService {
 
             orderItems.add(orderItemService.save(orderItem));
 
+            notificationService.createNotification(e.getProduct().getUser().getUserId(), order.getUser().getName() + " Kullanıcısı " + orderItem.getProduct().getName() + " Ürününden " + orderItem.getQuantity() + " adet satın aldı. En kısa sürede teslim etmen bekleniyor.");
+
         });
 
         return orderItems;
@@ -86,7 +96,7 @@ public class OrderService {
             throw new NotFoundException("sepet boş");
 
         Order order = new Order();
-        order.setOrdersDate(new Date());
+        order.setOrdersDate(LocalDateTime.now());
         order.setStatus("Bekliyor");
         order.setUser(user);
         order.setTotalPrice(0.0);

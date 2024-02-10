@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class Order {
     @Column(name = "orders_id")
     private Long orderId;
 
-    private Date ordersDate;
+    private LocalDateTime ordersDate;
 
     private Double totalPrice;
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.sound.sampled.Port;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class ProductService {
 
         Product product = new Product();
 
-        product.setCreatedAt(new Date());
+        product.setCreatedAt(LocalDateTime.now());
         product.setDescription(productCreateRequest.getDescription());
         product.setName(productCreateRequest.getName());
         product.setPrice(productCreateRequest.getPrice());
