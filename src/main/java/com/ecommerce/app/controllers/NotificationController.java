@@ -17,8 +17,8 @@ public class NotificationController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getNotReadedNotifications(@PathVariable Long id, @RequestBody GetNotificationsRequest getNotificationsRequest){
-        return ResponseHandler.generateResponse(200, notificationService.getUsersNotifications(id , getNotificationsRequest));
+    public ResponseEntity<Object> getNotReadedNotifications(@PathVariable Long id, @RequestBody GetNotificationsRequest getNotificationsRequest, @RequestParam(name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200, notificationService.getUsersNotifications(id , getNotificationsRequest , page));
     }
 
 }

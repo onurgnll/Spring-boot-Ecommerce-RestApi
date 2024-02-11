@@ -4,6 +4,10 @@ import com.ecommerce.app.Exceptions.NotFoundException;
 import com.ecommerce.app.entity.*;
 import com.ecommerce.app.repos.CommentRepo;
 import com.ecommerce.app.requests.CreateCommentRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -32,16 +36,35 @@ public class CommentService {
     }
 
 
-    public List<Comment> findCommentsByUserId(Long id){
+    public Page<Comment> findCommentsByUserId(Long id , int page){
 
         User user = userService.findById(id);
-        return user.getComments();
+
+
+        List<Comment> comments = user.getComments();
+
+        Pageable pageable = PageRequest.of(page, 10);
+
+        int start = (int) pageable.getOffset();
+
+        int end = Math.min((start + pageable.getPageSize()), comments.size());
+
+        return new PageImpl<>(comments.subList(start,end), pageable , comments.size());
     }
 
-    public List<Comment> findCommentsByProductId(Long id){
+    public Page<Comment> findCommentsByProductId(Long id, int page){
 
         Product product = productService.findById(id);
-        return product.getComments();
+
+        List<Comment> comments = product.getComments();
+
+        Pageable pageable = PageRequest.of(page, 10);
+
+        int start = (int) pageable.getOffset();
+
+        int end = Math.min((start + pageable.getPageSize()), comments.size());
+
+        return new PageImpl<>(comments.subList(start, end),pageable,comments.size());
     }
 
     public Comment createComment(CreateCommentRequest createCommentRequest, Long productId){

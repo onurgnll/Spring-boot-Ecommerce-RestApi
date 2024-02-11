@@ -18,8 +18,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllCategories(){
-        return ResponseHandler.generateResponse(200, categoryService.getCategories());
+    public ResponseEntity<Object> getAllCategories(@RequestParam(name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200, categoryService.getCategories(page));
     }
 
     @PostMapping

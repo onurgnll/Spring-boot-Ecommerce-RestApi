@@ -5,6 +5,10 @@ import com.ecommerce.app.entity.User;
 import com.ecommerce.app.repos.NotificationRepo;
 import com.ecommerce.app.requests.GetNotificationsRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -36,7 +40,7 @@ public class NotificationService {
         return notificationRepo.save(notification);
     }
 
-    public List<Notification> getUsersNotifications(Long id, GetNotificationsRequest getNotificationsRequest) {
+    public Page<Notification> getUsersNotifications(Long id, GetNotificationsRequest getNotificationsRequest , int page) {
         List<Notification> list;
 
         if (getNotificationsRequest.isGetOnlyNotReadedNotifications()) {
@@ -58,8 +62,14 @@ public class NotificationService {
             }
         }
 
-        // Orijinal listeyi döndür
-        return originalList;
+
+        Pageable pageable = PageRequest.of(page,10);
+
+        int start = page;
+
+        int end = Math.min((start + pageable.getPageSize()), originalList.size());
+
+        return new PageImpl<>(originalList.subList(start,end),pageable,originalList.size());
     }
 
 

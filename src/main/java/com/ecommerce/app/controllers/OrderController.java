@@ -17,8 +17,8 @@ public class OrderController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Object> getUsersOrders(@PathVariable Long id){
-        return ResponseHandler.generateResponse(200,orderService.findOrdersByUserUserId(id));
+    public ResponseEntity<Object> getUsersOrders(@PathVariable Long id, @RequestParam(name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200,orderService.findOrdersByUserUserId(id , page));
     }
 
     @PostMapping

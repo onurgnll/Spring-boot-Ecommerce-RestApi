@@ -18,9 +18,9 @@ public class ShipmentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getAllShipmentsByUserId(@PathVariable Long id){
+    public ResponseEntity<Object> getAllShipmentsByUserId(@PathVariable Long id, @RequestParam(name = "page", defaultValue = "0") int page){
 
-        return ResponseHandler.generateResponse(200, shipmentService.findShipmentsByUserId(id));
+        return ResponseHandler.generateResponse(200, shipmentService.findShipmentsByUserId(id, page));
 
 
     }

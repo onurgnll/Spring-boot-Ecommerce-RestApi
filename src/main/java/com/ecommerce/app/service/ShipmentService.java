@@ -6,6 +6,9 @@ import com.ecommerce.app.entity.Shipment;
 import com.ecommerce.app.repos.ShipmentRepo;
 import com.ecommerce.app.requests.SetShipmentStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,8 +36,9 @@ public class ShipmentService {
     }
 
 
-    public List<Shipment> findShipmentsByUserId(Long id) {
-        return shipmentRepo.findShipmentsByUserUserId(id);
+    public Page<Shipment> findShipmentsByUserId(Long id, int page) {
+        Pageable pageable = PageRequest.of(page, 10);
+        return shipmentRepo.findShipmentsByUserUserId(id,pageable);
 
     }
 

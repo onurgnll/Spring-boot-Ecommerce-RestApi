@@ -7,6 +7,9 @@ import com.ecommerce.app.entity.Product;
 import com.ecommerce.app.repos.CategoryRepo;
 import com.ecommerce.app.requests.CreateCategoryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,8 +31,12 @@ public class CategoryService {
     }
 
 
-    public List<Category> getCategories(){
-        return categoryRepo.findAll();
+    public Page<Category> getCategories(int page){
+
+        Pageable pageable = PageRequest.of(page, 10);
+
+
+        return categoryRepo.findAll(pageable);
     }
 
     public Category save(Category category){

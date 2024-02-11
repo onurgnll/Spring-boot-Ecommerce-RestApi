@@ -71,8 +71,7 @@ public class UserService {
         user.setEmail(userCreateRequest.getEmail());
         user.setPassword(userCreateRequest.getPassword());
 
-        User savedUser = save(user);
-        return savedUser;
+        return save(user);
     }
 
 
@@ -120,8 +119,6 @@ public class UserService {
 
         user.getFavorites().remove(product);
         save(user);
-
-
     }
 
 

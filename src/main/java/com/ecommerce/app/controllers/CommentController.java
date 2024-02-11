@@ -17,13 +17,13 @@ public class CommentController {
     }
 
     @GetMapping("/product/{id}")
-    public ResponseEntity<Object> getProductCommentsByProductId(@PathVariable Long id){
-        return ResponseHandler.generateResponse(200, commentService.findCommentsByProductId(id));
+    public ResponseEntity<Object> getProductCommentsByProductId(@PathVariable Long id , @RequestParam(name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200, commentService.findCommentsByProductId(id , page));
     }
 
     @GetMapping("/user/{id}")
-    public ResponseEntity<Object> getProductCommentsByUserId(@PathVariable Long id){
-        return ResponseHandler.generateResponse(200, commentService.findCommentsByUserId(id));
+    public ResponseEntity<Object> getProductCommentsByUserId(@PathVariable Long id, @RequestParam(name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200, commentService.findCommentsByUserId(id, page));
     }
 
     @PostMapping("/{id}")
