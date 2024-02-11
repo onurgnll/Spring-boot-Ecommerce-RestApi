@@ -18,8 +18,8 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllProducts(){
-        return ResponseHandler.generateResponse(200, productService.findAll());
+    public ResponseEntity<Object> getAllProducts(@RequestParam (name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200, productService.findAll(page));
     }
 
     @PostMapping

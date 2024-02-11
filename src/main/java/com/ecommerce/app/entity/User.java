@@ -60,4 +60,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Shipment> shipments;
 
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
 }

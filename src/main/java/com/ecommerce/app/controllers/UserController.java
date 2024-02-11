@@ -17,9 +17,9 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getAllUsers(){
+    public ResponseEntity<Object> getAllUsers(@RequestParam(name = "page", defaultValue = "0") int page){
 
-        return ResponseHandler.generateResponse(200,userService.findAll() );
+        return ResponseHandler.generateResponse(200,userService.findAll(page) );
     }
 
     @PostMapping
@@ -33,13 +33,13 @@ public class UserController {
     }
 
     @GetMapping("/{id}/products")
-    public ResponseEntity<Object> getProductsById(@PathVariable Long id){
-        return ResponseHandler.generateResponse(200, userService.findProductsById(id));
+    public ResponseEntity<Object> getProductsById(@PathVariable Long id, @RequestParam(name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200, userService.findProductsById(id, page));
     }
 
     @GetMapping("/{id}/favorites")
-    public ResponseEntity<Object> getFavorites(@PathVariable Long id){
-        return ResponseHandler.generateResponse(200, userService.getUserFavorites(id));
+    public ResponseEntity<Object> getFavorites(@PathVariable Long id, @RequestParam(name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200, userService.getUserFavorites(id, page));
     }
 
     @PostMapping("/{id}/favorites")
@@ -68,8 +68,8 @@ public class UserController {
     }
 
     @GetMapping("/{id}/cart")
-    public ResponseEntity<Object> getUserCart(@PathVariable Long id){
-        return ResponseHandler.generateResponse(200, userService.findAllCartItemsById(id));
+    public ResponseEntity<Object> getUserCart(@PathVariable Long id, @RequestParam(name = "page", defaultValue = "0") int page){
+        return ResponseHandler.generateResponse(200, userService.findAllCartItemsById(id, page));
     }
 
 

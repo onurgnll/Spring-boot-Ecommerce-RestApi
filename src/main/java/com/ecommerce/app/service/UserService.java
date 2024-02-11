@@ -6,6 +6,10 @@ import com.ecommerce.app.entity.*;
 import com.ecommerce.app.repos.UserRepo;
 import com.ecommerce.app.requests.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,8 +38,10 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
-    public List<User> findAll() {
-        return userRepo.findAll();
+    public Page<User> findAll(int page) {
+
+        Pageable pageable = PageRequest.of(page, 10);
+        return userRepo.findAll(pageable);
     }
 
     public User findById(Long id) {
@@ -70,16 +76,22 @@ public class UserService {
     }
 
 
-    public List<Product> findProductsById(Long id) {
-        findById(id);
-        return productService.findProductsByUserId(id);
+    public Page<Product> findProductsById(Long id, int page) {
+        User user = findById(id);
+        return productService.findProductsByUserId(id,page);
     }
 
 
-    public List<Product> getUserFavorites(Long id) {
+    public Page<Product> getUserFavorites(Long id , int page) {
         User user = findById(id);
 
-        return user.getFavorites();
+        Pageable pageable = PageRequest.of(page, 10);
+        List<Product> favorites = user.getFavorites();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), favorites.size());
+
+        return new PageImpl<>(favorites.subList(start, end), pageable, favorites.size());
     }
 
     public void addToFavorites(AddToFavoritesRequest addToFavoritesRequest, Long userId) {
@@ -150,10 +162,15 @@ public class UserService {
         return cartItemService.save(cartItem);
     }
 
-    public List<CartItem> findAllCartItemsById(Long id) {
+    public Page<CartItem> findAllCartItemsById(Long id, int page) {
         User user = findById(id);
+        List<CartItem> cart = user.getCartItems();
+        Pageable pageable = PageRequest.of(page, 10);
 
-        return user.getCartItems();
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), cart.size());
+
+        return new PageImpl<>(cart.subList(start, end) , pageable ,cart.size());
     }
 
     public void removeFromCartList(RemoveFromCartList removeFromCartList, Long id) {

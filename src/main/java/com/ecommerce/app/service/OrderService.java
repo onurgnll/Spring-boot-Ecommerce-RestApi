@@ -107,7 +107,7 @@ public class OrderService {
 
         User user = userService.findById(orderCreateRequest.getUserId());
 
-        if(user.getAddress().isEmpty()){
+        if(user.getAddress() == null){
             throw new NotFoundException("You dont have added any address please add and retry");
         }
         List<CartItem> cartItems = user.getCartItems();

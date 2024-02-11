@@ -50,6 +50,13 @@ public class Product {
     private List<Category> categories;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product" , cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
+
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
+
 }

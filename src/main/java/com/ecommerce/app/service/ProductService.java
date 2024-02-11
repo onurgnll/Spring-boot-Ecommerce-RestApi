@@ -7,6 +7,9 @@ import com.ecommerce.app.repos.ProductRepo;
 import com.ecommerce.app.requests.ProductCreateRequest;
 import com.ecommerce.app.requests.ProductUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.sound.sampled.Port;
@@ -30,9 +33,9 @@ public class ProductService {
         this.productRepo = productRepo;
     }
 
-    public List<Product> findAll(){
-
-        return productRepo.findAll();
+    public Page<Product> findAll(int page){
+        Pageable pageable = PageRequest.of(page, 10);
+        return productRepo.findAll(pageable);
     }
 
 
@@ -81,9 +84,12 @@ public class ProductService {
     }
 
 
-    public List<Product> findProductsByUserId(Long userId){
+    public Page<Product> findProductsByUserId(Long userId, int page){
         User user = userService.findById(userId);
-        return user.getProducts();
+
+        Pageable pageable = PageRequest.of(page, 10);
+
+        return productRepo.findProductsByUserUserId(userId,pageable);
     }
 
 }

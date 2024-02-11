@@ -29,7 +29,7 @@ public class Order {
     private User user;
 
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order" , cascade = {CascadeType.DETACH, CascadeType.MERGE , CascadeType.PERSIST, CascadeType.REFRESH})
     private List<OrderItem> orderItems;
 
 
