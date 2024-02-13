@@ -3,13 +3,19 @@ package com.ecommerce.app.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
 @Table(name = "user")
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,11 +25,21 @@ public class User {
 
     private String name;
 
+    @Column(unique = true)
+    private String username;
 
-    private String email;
     private String password;
-
     private String address;
+
+    private boolean accountNonExpired = true;
+    private boolean accountNonLocked = true;
+    private boolean isEnabled = true;
+    private boolean credentialsNonExpired = true;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role" , joinColumns = @JoinColumn(name = "user_id") , inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private List<Role> authorities;
+
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -65,5 +81,6 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Comment> comments;
+
 
 }

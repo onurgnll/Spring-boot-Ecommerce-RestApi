@@ -3,6 +3,7 @@ package com.ecommerce.app.service;
 import com.ecommerce.app.Exceptions.AlreadyExistException;
 import com.ecommerce.app.Exceptions.NotFoundException;
 import com.ecommerce.app.entity.*;
+import com.ecommerce.app.repos.RoleRepo;
 import com.ecommerce.app.repos.UserRepo;
 import com.ecommerce.app.requests.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -23,6 +25,8 @@ public class UserService {
     private ProductService productService;
     private CartItemService cartItemService;
 
+    private RoleRepo roleRepo;
+
     @Autowired
     public void setCartItemService(CartItemService cartItemService) {
         this.cartItemService = cartItemService;
@@ -33,9 +37,11 @@ public class UserService {
         this.productService = productService;
     }
 
+
     @Autowired
-    public UserService(UserRepo userRepo) {
+    public UserService(UserRepo userRepo , RoleRepo roleRepo) {
         this.userRepo = userRepo;
+        this.roleRepo = roleRepo;
     }
 
     public Page<User> findAll(int page) {
@@ -47,6 +53,9 @@ public class UserService {
     public User findById(Long id) {
         return userRepo.findById(id).orElseThrow(() -> new NotFoundException("User not found was given id: " + id.toString()));
     }
+    public User findByUsername(String username) {
+        return userRepo.findUserByUsername(username);
+       }
 
     public User save(User user) {
         return userRepo.save(user);
@@ -59,17 +68,23 @@ public class UserService {
     }
 
     public User createUser(UserCreateRequest userCreateRequest) {
-        if (userRepo.findUserByEmail(userCreateRequest.getEmail()) != null)
+        /*
+        if (userRepo.findUserByUsername(userCreateRequest.getEmail()) != null)
             throw new AlreadyExistException("this email already used");
-
+*/
         if (!isValidEmail(userCreateRequest.getEmail()))
             throw new RuntimeException("This email is not valid");
 
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
 
         User user = new User();
         user.setName(userCreateRequest.getName());
-        user.setEmail(userCreateRequest.getEmail());
-        user.setPassword(userCreateRequest.getPassword());
+        user.setUsername(userCreateRequest.getEmail());
+        user.setPassword(bCryptPasswordEncoder.encode(userCreateRequest.getPassword()));
+        user.setAuthorities(new ArrayList<>());
+
+
+        user.getAuthorities().add(roleRepo.findByName("ROLE_USER"));
 
         return save(user);
     }
@@ -227,4 +242,5 @@ public class UserService {
 
         return save(user);
     }
+
 }
