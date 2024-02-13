@@ -28,14 +28,20 @@ public class User implements UserDetails {
     @Column(unique = true)
     private String username;
 
+    @JsonIgnore
     private String password;
     private String address;
 
+    @JsonIgnore
     private boolean accountNonExpired = true;
+    @JsonIgnore
     private boolean accountNonLocked = true;
+    @JsonIgnore
     private boolean isEnabled = true;
+    @JsonIgnore
     private boolean credentialsNonExpired = true;
 
+    @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role" , joinColumns = @JoinColumn(name = "user_id") , inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> authorities;

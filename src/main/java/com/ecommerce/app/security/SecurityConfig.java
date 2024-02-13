@@ -1,19 +1,21 @@
 package com.ecommerce.app.security;
 
-import com.ecommerce.app.service.UserDetailsServiceImpl;
 import com.ecommerce.app.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,24 +24,25 @@ public class SecurityConfig {
 
     private UserService userService;
 
-    public SecurityConfig(UserService userService) {
+
+    private JwtAuthFilter jwtAuthFilter;
+
+
+    public SecurityConfig(UserService userService, JwtAuthFilter jwtAuthFilter) {
         this.userService = userService;
+        this.jwtAuthFilter = jwtAuthFilter;
     }
 
-    private UserDetailsServiceImpl userDetailsService(){
-        return new UserDetailsServiceImpl(userService);
-    };
-
     @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public DaoAuthenticationProvider daoAuthenticationProvider(){
+    public AuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(bCryptPasswordEncoder());
-        daoAuthenticationProvider.setUserDetailsService(userDetailsService());
+        daoAuthenticationProvider.setUserDetailsService(userService);
 
         return daoAuthenticationProvider;
 
@@ -50,20 +53,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
 
         security.authorizeHttpRequests(request ->
-                        request
-                                .requestMatchers(HttpMethod.POST, "/categories").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/products").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/categories").permitAll()
-                                .requestMatchers(HttpMethod.GET,"/users").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.POST,"/users").permitAll()
-                                .requestMatchers(HttpMethod.PUT, "/shipment/**").hasAnyRole("ADMIN" , "SELLER")
-                                .anyRequest().authenticated()
+                request
+                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/categories").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/products").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categories").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/shipment/**").hasAnyRole("ADMIN", "SELLER")
+                        .anyRequest().authenticated()
 
 
-                );
-
-
-
+        );
+        security.authenticationProvider(daoAuthenticationProvider());
+        security.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         security.httpBasic(Customizer.withDefaults());
         security.csrf(AbstractHttpConfigurer::disable);
@@ -71,7 +74,10 @@ public class SecurityConfig {
         return security.build();
     }
 
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
 
-
+    }
 
 }

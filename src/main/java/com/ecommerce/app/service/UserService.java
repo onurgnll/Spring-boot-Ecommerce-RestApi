@@ -11,21 +11,43 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private UserRepo userRepo;
     private ProductService productService;
     private CartItemService cartItemService;
 
     private RoleRepo roleRepo;
+
+
+    private JwtService jwtService;
+
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    public void setJwtService(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    @Autowired
+    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
+    }
 
     @Autowired
     public void setCartItemService(CartItemService cartItemService) {
@@ -39,7 +61,7 @@ public class UserService {
 
 
     @Autowired
-    public UserService(UserRepo userRepo , RoleRepo roleRepo) {
+    public UserService(UserRepo userRepo , RoleRepo roleRepo ) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
     }
@@ -67,11 +89,32 @@ public class UserService {
 
     }
 
-    public User createUser(UserCreateRequest userCreateRequest) {
-        /*
+    public HashMap<String, Object> loginUser(LoginRequest userCreateRequest) {
+
+        if (!isValidEmail(userCreateRequest.getEmail()))
+            throw new RuntimeException("This email is not valid");
+
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+
+        User user = findByUsername(userCreateRequest.getEmail());
+
+        HashMap<String , Object> hashMap = new HashMap<String , Object> ();
+
+        hashMap.put("user", user);
+
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userCreateRequest.getEmail(), userCreateRequest.getPassword()));
+        if (authentication.isAuthenticated()) {
+            hashMap.put("token" , jwtService.generateToken(userCreateRequest.getEmail()));
+            return hashMap;
+        }
+        throw new NotFoundException("username not found");
+    }
+    public HashMap<String, Object> createUser(UserCreateRequest userCreateRequest) {
+
         if (userRepo.findUserByUsername(userCreateRequest.getEmail()) != null)
             throw new AlreadyExistException("this email already used");
-*/
+
         if (!isValidEmail(userCreateRequest.getEmail()))
             throw new RuntimeException("This email is not valid");
 
@@ -86,7 +129,17 @@ public class UserService {
 
         user.getAuthorities().add(roleRepo.findByName("ROLE_USER"));
 
-        return save(user);
+        HashMap<String , Object> hashMap = new HashMap<String , Object> ();
+
+        hashMap.put("user", save(user));
+
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userCreateRequest.getEmail(), userCreateRequest.getPassword()));
+        if (authentication.isAuthenticated()) {
+            hashMap.put("token" , jwtService.generateToken(userCreateRequest.getEmail()));
+            return hashMap;
+        }
+        throw new NotFoundException("username not found");
     }
 
 
@@ -242,5 +295,12 @@ public class UserService {
 
         return save(user);
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return findByUsername(username);
+    }
+
+
 
 }
