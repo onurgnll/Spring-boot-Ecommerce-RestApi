@@ -36,3 +36,5 @@ After that your project is ready to run. You can run it using the SchoolprojectA
 **Documentation**;
 
 After running the project, you can access the project documentation at http://localhost:3000/api/docs.html. It has been created using OpenAPI.
+
+You can import Postman collection from file named "Spring-ecommerce.postman_collection.json"
