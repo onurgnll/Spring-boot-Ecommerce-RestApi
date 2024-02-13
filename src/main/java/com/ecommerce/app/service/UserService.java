@@ -298,6 +298,11 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        UserDetails userDetails = findByUsername(username);
+        if(userDetails == null){
+            throw new NotFoundException("asd");
+        }
         return findByUsername(username);
     }
 

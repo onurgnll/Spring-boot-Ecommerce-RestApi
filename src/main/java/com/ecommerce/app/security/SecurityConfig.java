@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -54,6 +55,12 @@ public class SecurityConfig {
 
         security.authorizeHttpRequests(request ->
                 request
+                        .requestMatchers("/swagger-ui/**", "/javainuse-openapi/**").permitAll()
+                        .requestMatchers("/docs/**").permitAll()
+                        .requestMatchers("/docs").permitAll()
+                        .requestMatchers("/docs.html").permitAll()
+                        .requestMatchers("/swagger-ui/index.html").permitAll()
+                        .requestMatchers("/swagger-ui").permitAll()
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/categories").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/products").permitAll()
@@ -70,7 +77,7 @@ public class SecurityConfig {
 
         security.httpBasic(Customizer.withDefaults());
         security.csrf(AbstractHttpConfigurer::disable);
-
+        security.sessionManagement(s-> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return security.build();
     }
 
